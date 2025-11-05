@@ -68,7 +68,9 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div class="flex flex-col gap-2">
-                <label for="channel" class="text-sm text-zinc-400">Channel</label>
+                <label for="channel" class="text-sm text-zinc-400"
+                  >Channel</label
+                >
                 <input
                   id="channel"
                   placeholder="whatsapp"
@@ -84,36 +86,45 @@
                 />
               </div>
             </div>
-            <div class="flex flex-col gap-2">
-              <label for="keterangan" class="text-sm text-zinc-400">Keterangan</label>
+            <div class="flex flex-col gap-2 mb-4">
+              <label for="keterangan" class="text-sm text-zinc-400"
+                >Keterangan</label
+              >
               <input
                 id="keterangan"
                 placeholder="catatan..."
                 class="bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-zinc-100 focus:ring-2 focus:ring-amber-400 focus:border-amber-400 transition"
               />
             </div>
-
-            <button
-              class="bg-amber-400 hover:bg-amber-300 text-zinc-900 font-semibold px-4 py-3 rounded-lg shadow transition justify-self-end"
-            >
-              Simpan Responden
-            </button>
+            <div class="flex flex-col gap-2 mt-4">
+              <button
+                class="bg-amber-400 hover:bg-amber-300 text-zinc-900 font-semibold px-4 py-3 rounded-lg shadow transition justify-self-end"
+              >
+                Simpan Responden
+              </button>
+            </div>
           </form>
 
           <!-- Import CSV -->
           <div class="border-t border-zinc-800 pt-4 mt-2 space-y-3">
             <h3 class="text-sm font-semibold text-zinc-300">Import CSV</h3>
             <p class="text-xs text-zinc-500">
-              Format kolom (header): full_name, phone, channel, respon, keterangan
+              Format kolom (header): full_name, phone, channel, respon,
+              keterangan
             </p>
-            <div class="flex flex-col gap-2 sm:flex-row sm:items-center">
+            <div class="flex flex-col gap-2">
               <input
                 id="csvFile"
                 type="file"
                 accept=".csv,text/csv"
                 class="file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-zinc-800 file:text-zinc-2 00 file:hover:bg-zinc-700 bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-zinc-100 w-full sm:w-auto"
               />
-              <button id="importCsvBtn" class="bg-zinc-800 hover:bg-zinc-700 text-zinc-100 px-4 py-2 rounded-lg border border-zinc-700 transition">Import CSV</button>
+              <button
+                id="importCsvBtn"
+                class="bg-amber-400 hover:bg-amber-300 text-zinc-900 font-semibold px-4 py-3 rounded-lg shadow transition justify-self-end"
+              >
+                Import CSV
+              </button>
             </div>
           </div>
         </section>
