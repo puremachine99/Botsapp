@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Whatsappin orang </title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="script.js" defer></script>
+  </head>
+
+  <body class="bg-zinc-900 text-zinc-100 min-h-screen flex flex-col">
+    <!-- Header -->
+    <header class="bg-zinc-950 border-b border-zinc-800 sticky top-0 z-50">
+      <div
+        class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center"
+      >
+        <h1 class="text-2xl font-bold text-amber-400 flex items-center gap-2">
+          <span class="text-3xl"></span> Whatsappin orang 
+        </h1>
+        <span
+          id="status"
+          class="text-sm bg-zinc-800 text-zinc-200 px-3 py-1 rounded-full border border-zinc-700"
+          >Bot: Checking...</span
+        >
+      </div>
+    </header>
+
+    <!-- MAIN -->
+    <main
+      class="flex-grow max-w-7xl mx-auto w-full p-6 grid grid-cols-1 lg:grid-cols-2 gap-6"
+    >
+      <!-- LEFT: TOOLS -->
+      <section
+        class="flex flex-col bg-zinc-950 border border-zinc-800 rounded-xl shadow p-6 space-y-4"
+      >
+        <h2 class="text-xl font-semibold text-zinc-100">Kirim Broadcast</h2>
+
+        <textarea
+          id="message"
+          rows="20"
+          placeholder="Gunakan {{user}} untuk menyapa personal"
+          class="w-full bg-zinc-900 border border-zinc-700 rounded-lg focus:ring-2 focus:ring-amber-400 focus:border-amber-400 text-zinc-100 p-3 resize-none"
+        >
+November Hemat, Belajar Tanpa Batas!
+
+Halo {{user}},
+Terima kasih sudah mengikuti program Smart Discussion Series (SDS) dari SmartID.
+
+Saya Noval Luqman dari SmartID ingin menginformasikan bahwa kami memiliki program pembelajaran online untuk membantu ASN mengembangkan kompetensi dan memenuhi Jam Pelajaran (JP).
+
+Dengan berlangganan kelas online SmartID hanya Rp176.900/bulan, anda bisa mengakses lebih dari 500 video pembelajaran dan mendapatkan sertifikat resmi 📜
+
+Untuk info lebih lanjut, silakan klik https://s.id/smarthero142
+ atau balas pesan ini agar saya bisa membantu langsung.
+
+Terima kasih atas waktunya {{user}}
+SmartID
+      </textarea
+        >
+
+        <button
+          id="sendBtn"
+          class="bg-amber-400 hover:bg-amber-300 text-zinc-900 font-semibold px-6 py-3 rounded-lg shadow self-end transition"
+        >
+          Kirim Broadcast
+        </button>
+
+        <!-- LOG -->
+        <div class="flex flex-col border-t border-zinc-800 pt-4">
+          <div class="flex justify-between items-center mb-2">
+            <h3 class="text-lg font-semibold text-zinc-100">
+              Log Pengiriman
+            </h3>
+            <button
+              id="clearLog"
+              class="text-sm text-zinc-400 hover:text-amber-400"
+            >
+              Hapus Log
+            </button>
+          </div>
+          <pre
+            id="result"
+            class="bg-zinc-900 text-amber-400 rounded-lg p-3 text-xs overflow-y-auto h-[380px] shadow-inner font-mono border border-zinc-800"
+          ><code>Belum ada aktivitas...</code></pre>
+        </div>
+      </section>
+
+      <!-- RIGHT: USER LIST -->
+      <section
+        class="flex flex-col bg-zinc-950 border border-zinc-800 rounded-xl shadow p-6"
+      >
+        <div class="flex justify-between items-center mb-3">
+          <h2
+            class="text-xl font-semibold text-zinc-100 flex items-center gap-2"
+          >
+            Daftar Pengguna
+          </h2>
+          <div class="flex gap-3 items-center">
+            <button
+              id="refreshUsers"
+              class="text-sm text-zinc-400 hover:text-amber-400"
+            >
+              🔄 Refresh
+            </button>
+            <button
+              id="selectAll"
+              class="text-sm text-amber-400 hover:underline"
+            >
+              Pilih Semua
+            </button>
+          </div>
+        </div>
+
+        <div
+          id="userList"
+          class="overflow-y-auto border border-zinc-800 rounded-lg p-3 bg-zinc-900 space-y-2 h-[700px]"
+        >
+          <div class="text-zinc-500 italic">Memuat data user...</div>
+        </div>
+      </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer
+      class="bg-zinc-950 border-t border-zinc-800 py-4 text-center text-sm text-zinc-500"
+    >
+      © 2025 Wa wa an • Built with 💩 by Theon Lyson
+    </footer>
+  </body>
+</html>

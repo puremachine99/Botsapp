@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Manajemen Responden</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="users.js" defer></script>
+  </head>
+  <body class="bg-zinc-900 text-zinc-100 min-h-screen flex flex-col">
+    <header class="bg-zinc-950 border-b border-zinc-800 sticky top-0 z-50">
+      <div
+        class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center"
+      >
+        <h1 class="text-2xl font-bold text-amber-400 flex items-center gap-2">
+          👥 Manajemen Responden
+        </h1>
+        <a
+          href="index.html"
+          class="text-sm text-zinc-400 hover:text-amber-400 transition"
+        >
+          ← Kembali ke Dashboard
+        </a>
+      </div>
+    </header>
+
+    <main
+      class="flex-grow max-w-7xl mx-auto w-full p-6 grid grid-cols-1 lg:grid-cols-3 gap-6"
+    >
+      <section
+        class="bg-zinc-950 border border-zinc-800 rounded-xl shadow p-6 space-y-4"
+      >
+        <div class="flex justify-between items-center">
+          <h2 class="text-xl font-semibold text-zinc-100">
+            Tambah Responden
+          </h2>
+        </div>
+        <form
+          id="addForm"
+          class="grid grid-cols-1 gap-4"
+        >
+          <div class="flex flex-col gap-2">
+            <label for="name" class="text-sm text-zinc-400">Nama</label>
+            <input
+              id="name"
+              placeholder="Iman Santoso"
+              class="bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-zinc-100 focus:ring-2 focus:ring-amber-400 focus:border-amber-400 transition"
+              required
+            />
+          </div>
+          <div class="flex flex-col gap-2">
+            <label for="phone" class="text-sm text-zinc-400"
+              >Nomor Whatsapp</label
+            >
+            <input
+              id="phone"
+              placeholder="+62..."
+              class="bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-zinc-100 focus:ring-2 focus:ring-amber-400 focus:border-amber-400 transition"
+              required
+            />
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="flex flex-col gap-2">
+              <label for="department" class="text-sm text-zinc-400"
+                >Departemen</label
+              >
+              <input
+                id="department"
+                placeholder="HR"
+                class="bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-zinc-100 focus:ring-2 focus:ring-amber-400 focus:border-amber-400 transition"
+              />
+            </div>
+            <div class="flex flex-col gap-2">
+              <label for="team" class="text-sm text-zinc-400">Team</label>
+              <input
+                id="team"
+                placeholder="Shift Pagi"
+                class="bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-zinc-100 focus:ring-2 focus:ring-amber-400 focus:border-amber-400 transition"
+              />
+            </div>
+          </div>
+          <button
+            class="bg-amber-400 hover:bg-amber-300 text-zinc-900 font-semibold px-4 py-3 rounded-lg shadow transition justify-self-end"
+          >
+            Simpan Responden
+          </button>
+        </form>
+      </section>
+
+      <section
+        class="lg:col-span-2 bg-zinc-950 border border-zinc-800 rounded-xl shadow p-6 flex flex-col"
+      >
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-xl font-semibold text-zinc-100">
+            Data Responden
+          </h2>
+          <button
+            id="refreshUsers"
+            class="text-sm text-zinc-400 hover:text-amber-400 transition"
+          >
+            🔄 Refresh
+          </button>
+        </div>
+        <div class="overflow-x-auto border border-zinc-800 rounded-lg">
+          <table class="w-full text-sm text-left border-collapse">
+            <thead class="bg-zinc-900 text-zinc-400 uppercase text-xs">
+              <tr>
+                <th class="px-4 py-3 font-semibold">Nama</th>
+                <th class="px-4 py-3 font-semibold">Nomor</th>
+                <th class="px-4 py-3 font-semibold">Departemen</th>
+                <th class="px-4 py-3 font-semibold">Team</th>
+                <th class="px-4 py-3 font-semibold">Tags</th>
+                <th class="px-4 py-3 font-semibold text-center">Aksi</th>
+              </tr>
+            </thead>
+            <tbody
+              id="userTable"
+              class="divide-y divide-zinc-800 bg-zinc-950"
+            ></tbody>
+          </table>
+        </div>
+        <p class="text-xs text-zinc-500 mt-4">
+          Tips: klik kolom dropdown untuk memperbarui data, tombol hapus akan
+          menghapus responden secara permanen.
+        </p>
+      </section>
+    </main>
+
+    <footer
+      class="bg-zinc-950 border-t border-zinc-800 py-4 text-center text-sm text-zinc-500"
+    >
+      © 2025 Wa wa an • Built with 💩 by Theon Lyson
+    </footer>
+  </body>
+</html>
