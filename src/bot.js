@@ -54,11 +54,11 @@ async function sendMessageBatch(users, text, delay = [3000, 7000]) {
     const chatId = `${phone}@c.us`;
 
     // Ganti placeholder template
-    const message = text
-      .replace(/{{\s*nama\s*}}/gi, u.full_name || "")
-      .replace(/{{\s*dept\s*}}/gi, u.department || "-")
-      .replace(/{{\s*team\s*}}/gi, u.team || "-")
-      .replace(/{{\s*tags\s*}}/gi, (u.tags || []).join(", "));
+  const message = text
+    .replace(/{{\s*nama\s*}}/gi, u.full_name || "")
+    .replace(/{{\s*dept\s*}}/gi, u.channel || "-")
+    .replace(/{{\s*team\s*}}/gi, u.respon || "-")
+    .replace(/{{\s*tags\s*}}/gi, u.keterangan || "-");
 
     try {
       await client.sendMessage(chatId, message);

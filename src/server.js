@@ -1,4 +1,4 @@
-// src/server.js
+// node src/server.js
 require("dotenv").config();
 const express = require("express");
 const path = require("path");
@@ -46,7 +46,7 @@ const PORT = process.env.PORT || 3000;
 app.get("/users", async (req, res) => {
   try {
     const { rows } = await db.query(
-      "SELECT id, full_name, phone, department, team, tags FROM users ORDER BY id"
+      "SELECT id, full_name, phone, channel, respon, keterangan, respon AS team FROM users ORDER BY id"
     );
     res.json(rows);
   } catch (err) {
@@ -58,10 +58,10 @@ app.get("/users", async (req, res) => {
 // === Endpoint: tambah user ===
 app.post("/users", async (req, res) => {
   try {
-    const { full_name, phone, department, team, tags } = req.body;
+    const { full_name, phone, channel, respon, keterangan } = req.body;
     const { rows } = await db.query(
-      "INSERT INTO users (full_name, phone, department, team, tags) VALUES ($1,$2,$3,$4,$5) RETURNING *",
-      [full_name, phone, department, team, tags]
+      "INSERT INTO users (full_name, phone, channel, respon, keterangan) VALUES ($1,$2,$3,$4,$5) RETURNING *",
+      [full_name, phone, channel, respon, keterangan]
     );
     res.json(rows[0]);
   } catch (err) {
@@ -74,12 +74,12 @@ app.post("/users", async (req, res) => {
 app.put("/users/:id", async (req, res) => {
   try {
     const id = req.params.id;
-    const { full_name, phone, department, team, tags } = req.body;
+    const { full_name, phone, channel, respon, keterangan } = req.body;
     const { rows } = await db.query(
       `UPDATE users 
-       SET full_name=$1, phone=$2, department=$3, team=$4, tags=$5 
+       SET full_name=$1, phone=$2, channel=$3, respon=$4, keterangan=$5 
        WHERE id=$6 RETURNING *`,
-      [full_name, phone, department, team, tags, id]
+      [full_name, phone, channel, respon, keterangan, id]
     );
     res.json(rows[0]);
   } catch (err) {
@@ -88,6 +88,7 @@ app.put("/users/:id", async (req, res) => {
   }
 });
 // === Endpoint: update team user saja ===
+// Endpoint lama (kompatibilitas): map "team" ke kolom "respon"
 app.patch("/users/:id/team", async (req, res) => {
   try {
     const id = req.params.id;
@@ -98,7 +99,7 @@ app.patch("/users/:id/team", async (req, res) => {
     }
 
     const { rows } = await db.query(
-      `UPDATE users SET team = $1 WHERE id = $2 RETURNING id, full_name, team`,
+      `UPDATE users SET respon = $1 WHERE id = $2 RETURNING id, full_name, respon`,
       [team, id]
     );
 
@@ -108,7 +109,7 @@ app.patch("/users/:id/team", async (req, res) => {
 
     res.json({
       success: true,
-      message: `User #${id} updated with team = '${team}'`,
+      message: `User #${id} updated with respon = '${team}'`,
       data: rows[0],
     });
   } catch (err) {
@@ -128,6 +129,73 @@ app.delete("/users/:id", async (req, res) => {
     res.status(500).json({ error: "Failed to delete user" });
   }
 });
+
+// === Endpoint: import CSV sederhana ===
+// Terima body bertipe text/csv dengan header: full_name,phone,department,team,tags
+app.post(
+  "/users/import",
+  express.text({ type: "text/csv", limit: "5mb" }),
+  async (req, res) => {
+    try {
+      const csv = (req.body || "").trim();
+      if (!csv) return res.status(400).json({ error: "Empty CSV" });
+
+      const lines = csv.split(/\r?\n/).filter(Boolean);
+      if (lines.length < 2) {
+        return res.status(400).json({ error: "CSV must include header and rows" });
+      }
+
+      const header = lines[0]
+        .split(",")
+        .map((h) => h.trim().toLowerCase());
+      const needed = ["full_name", "phone", "channel", "respon", "keterangan"];
+      // toleransi variasi header
+      const norm = (s) => s.replace(/\s+/g, "_").toLowerCase();
+      const idx = Object.fromEntries(
+        needed.map((k) => [k, header.findIndex((h) => norm(h) === k)])
+      );
+      if (idx.full_name < 0 || idx.phone < 0) {
+        return res.status(400).json({
+          error: "Header minimal memuat full_name dan phone",
+          header,
+        });
+      }
+
+      let inserted = 0;
+      let skipped = 0;
+
+      await db.query("BEGIN");
+      try {
+        for (let i = 1; i < lines.length; i++) {
+          const cols = lines[i].split(",").map((c) => c.trim());
+          const full_name = cols[idx.full_name] || "";
+          const phone = cols[idx.phone] || "";
+          const channel = idx.channel >= 0 ? cols[idx.channel] || null : null;
+          const respon = idx.respon >= 0 ? cols[idx.respon] || null : null;
+          const keterangan = idx.keterangan >= 0 ? cols[idx.keterangan] || null : null;
+          if (!full_name || !phone) {
+            skipped++;
+            continue;
+          }
+          await db.query(
+            "INSERT INTO users (full_name, phone, channel, respon, keterangan) VALUES ($1,$2,$3,$4,$5)",
+            [full_name, phone, channel, respon, keterangan]
+          );
+          inserted++;
+        }
+        await db.query("COMMIT");
+      } catch (e) {
+        await db.query("ROLLBACK");
+        throw e;
+      }
+
+      res.json({ success: true, inserted, skipped, total: lines.length - 1 });
+    } catch (err) {
+      console.error("CSV import error:", err);
+      res.status(500).json({ error: "Failed to import CSV", detail: err.message });
+    }
+  }
+);
 
 app.listen(PORT, () =>
   console.log(`🚀 Server running at http://localhost:${PORT}`)

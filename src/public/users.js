@@ -1,10 +1,11 @@
 const userTable = document.getElementById("userTable");
 const form = document.getElementById("addForm");
 const refreshBtn = document.getElementById("refreshUsers");
+const importBtn = document.getElementById("importCsvBtn");
+const csvInput = document.getElementById("csvFile");
 
-const departments = ["HR", "Finance", "IT"];
-const teams = ["shift_pagi", "shift_malam"];
-const tagOptions = ["remote", "onsite", "contract", "fulltime"];
+const channels = ["whatsapp", "telegram", "sms"];
+const responOptions = ["Not Responded", "Responded", "Invalid"];
 
 async function fetchUsers() {
   const res = await fetch("/users");
@@ -20,35 +21,28 @@ function renderRow(u) {
     <td class="px-4 py-3 text-zinc-300">${u.phone}</td>
 
     <td class="px-4 py-3">
-      <select class="dept bg-zinc-900 border border-zinc-700 text-zinc-100 rounded-lg px-2 py-1 w-full focus:ring-2 focus:ring-amber-400 focus:border-amber-400 transition">
+      <select class="channel bg-zinc-900 border border-zinc-700 text-zinc-100 rounded-lg px-2 py-1 w-full focus:ring-2 focus:ring-amber-400 focus:border-amber-400 transition">
         <option value="">-</option>
-        ${departments
+        ${channels
           .map(
-            (d) =>
-              `<option ${u.department === d ? "selected" : ""}>${d}</option>`
+            (c) =>
+              `<option ${u.channel === c ? "selected" : ""}>${c}</option>`
           )
           .join("")}
       </select>
     </td>
 
     <td class="px-4 py-3">
-      <select class="team bg-zinc-900 border border-zinc-700 text-zinc-100 rounded-lg px-2 py-1 w-full focus:ring-2 focus:ring-amber-400 focus:border-amber-400 transition">
+      <select class="respon bg-zinc-900 border border-zinc-700 text-zinc-100 rounded-lg px-2 py-1 w-full focus:ring-2 focus:ring-amber-400 focus:border-amber-400 transition">
         <option value="">-</option>
-        ${teams
-          .map((t) => `<option ${u.team === t ? "selected" : ""}>${t}</option>`)
+        ${responOptions
+          .map((r) => `<option ${u.respon === r ? "selected" : ""}>${r}</option>`)
           .join("")}
       </select>
     </td>
 
     <td class="px-4 py-3">
-      <select class="tags bg-zinc-900 border border-zinc-700 text-zinc-100 rounded-lg px-2 py-1 w-full focus:ring-2 focus:ring-amber-400 focus:border-amber-400 transition" multiple>
-        ${tagOptions
-          .map(
-            (t) =>
-              `<option ${u.tags?.includes(t) ? "selected" : ""}>${t}</option>`
-          )
-          .join("")}
-      </select>
+      <input class="keterangan bg-zinc-900 border border-zinc-700 text-zinc-100 rounded-lg px-2 py-1 w-full focus:ring-2 focus:ring-amber-400 focus:border-amber-400 transition" value="${u.keterangan ?? ''}" placeholder="catatan..." />
     </td>
 
     <td class="px-4 py-3 text-center">
@@ -57,18 +51,18 @@ function renderRow(u) {
   `;
   userTable.appendChild(tr);
 
-  const deptSelect = tr.querySelector(".dept");
-  const teamSelect = tr.querySelector(".team");
-  const tagsSelect = tr.querySelector(".tags");
+  const channelSelect = tr.querySelector(".channel");
+  const responSelect = tr.querySelector(".respon");
+  const ketInput = tr.querySelector(".keterangan");
   const delBtn = tr.querySelector(".delete");
 
   const saveChange = async () => {
     const updated = {
       full_name: u.full_name,
       phone: u.phone,
-      department: deptSelect.value,
-      team: teamSelect.value,
-      tags: Array.from(tagsSelect.selectedOptions).map((o) => o.value),
+      channel: channelSelect.value,
+      respon: responSelect.value,
+      keterangan: ketInput.value,
     };
     await fetch(`/users/${u.id}`, {
       method: "PUT",
@@ -78,9 +72,9 @@ function renderRow(u) {
     console.log("✅ Updated:", u.full_name);
   };
 
-  deptSelect.addEventListener("change", saveChange);
-  teamSelect.addEventListener("change", saveChange);
-  tagsSelect.addEventListener("change", saveChange);
+  channelSelect.addEventListener("change", saveChange);
+  responSelect.addEventListener("change", saveChange);
+  ketInput.addEventListener("change", saveChange);
 
   delBtn.addEventListener("click", async () => {
     if (!confirm(`Hapus ${u.full_name}?`)) return;
@@ -93,13 +87,14 @@ form.addEventListener("submit", async (e) => {
   e.preventDefault();
   const full_name = document.getElementById("name").value;
   const phone = document.getElementById("phone").value;
-  const department = document.getElementById("department").value;
-  const team = document.getElementById("team").value;
+  const channel = document.getElementById("channel").value;
+  const respon = document.getElementById("respon").value;
+  const keterangan = document.getElementById("keterangan").value;
 
   await fetch("/users", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ full_name, phone, department, team, tags: [] }),
+    body: JSON.stringify({ full_name, phone, channel, respon, keterangan }),
   });
 
   form.reset();
@@ -110,4 +105,27 @@ fetchUsers();
 
 refreshBtn?.addEventListener("click", () => {
   fetchUsers();
+});
+
+importBtn?.addEventListener("click", async (e) => {
+  e.preventDefault();
+  const file = csvInput?.files?.[0];
+  if (!file) return alert("Pilih file CSV terlebih dahulu.");
+  try {
+    const text = await file.text();
+    const res = await fetch("/users/import", {
+      method: "POST",
+      headers: { "Content-Type": "text/csv" },
+      body: text,
+    });
+    const data = await res.json();
+    if (!res.ok || data.success === false) {
+      throw new Error(data.error || data.detail || "Gagal import");
+    }
+    alert(`Import selesai. Berhasil: ${data.inserted}, Dilewati: ${data.skipped}`);
+    csvInput.value = "";
+    fetchUsers();
+  } catch (err) {
+    alert("Gagal import CSV: " + err.message);
+  }
 });

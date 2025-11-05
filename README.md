@@ -5,9 +5,9 @@ Panel web ini memudahkan Anda mengirim pesan WhatsApp ke banyak kontak sekaligus
 ---
 
 ## Apa yang Bisa Dilakukan?
-- Menambahkan dan mengelola daftar responden (nama, nomor, departemen, tim, dan tag).
+- Menambahkan dan mengelola kontak (nama, nomor, channel, respon, dan keterangan).
 - Mengirim pesan broadcast dengan sapaan personal otomatis.
-- Memilih penerima berdasarkan departemen, tim, atau tag tertentu.
+- Menyaring daftar penerima berdasarkan channel/respon (lanjutan opsional).
 - Melihat status bot dan log pengiriman secara langsung di layar.
 
 ---
@@ -39,18 +39,19 @@ Siapkan terlebih dahulu:
        id SERIAL PRIMARY KEY,
        full_name TEXT NOT NULL,
        phone TEXT NOT NULL,
-       department TEXT,
-       team TEXT,
-       tags TEXT[] DEFAULT '{}',
-       opt_in BOOLEAN NOT NULL DEFAULT TRUE
+       channel TEXT,
+       respon TEXT,
+       keterangan TEXT,
+       opt_in BOOLEAN NOT NULL DEFAULT TRUE,
+       created_at TIMESTAMPTZ DEFAULT NOW()
      );
      ```
    - Ingin contoh data awal? Tambahkan:
      ```sql
-     INSERT INTO users (full_name, phone, department, team, tags)
+     INSERT INTO users (full_name, phone, channel, respon, keterangan)
      VALUES
-       ('Budi', '081234567890', 'IT', 'shift_pagi', ARRAY['fulltime']),
-       ('Sari', '081298765432', 'HR', 'shift_malam', ARRAY['remote','contract']);
+       ('Budi', '081234567890', 'WhatsApp', 'Not Responded', 'Follow up promo A'),
+       ('Sari', '081298765432', 'Telegram', 'Responded', 'Sudah konfirmasi hadir');
      ```
 
 3. **Install aplikasi**
@@ -82,28 +83,29 @@ Siapkan terlebih dahulu:
 
 ## Mengirim Broadcast Pertama Anda
 1. **Tentukan penerima**  
-   Gunakan filter `Department`, `Team`, atau `Tags` (isi beberapa tag dengan koma). Kosongkan bila ingin kirim ke semua.
+   Gunakan filter channel/respon di halaman utama jika ingin menargetkan grup tertentu. Kosongkan bila ingin kirim ke semua.
 2. **Tulis pesan**  
    Anda bisa menyapa secara personal dengan kode berikut:
    - `{{nama}}` → nama responden
-   - `{{dept}}` → departemennya
-   - `{{team}}` → timnya
-   - `{{tags}}` → daftar tag (dipisah koma)
+   - `{{dept}}` → channel (misal WhatsApp/Telegram)
+   - `{{team}}` → status respon
+   - `{{tags}}` → keterangan tambahan
 3. **Klik “Kirim Broadcast”**  
    Pantau prosesnya di log. Sistem mengirim satu per satu dengan jeda acak supaya aman dari blokir.
 
 Contoh pesan:
 ```
 Halo {{nama}},
-Pengumuman untuk departemen {{dept}} (team {{team}}).
-Tag kamu: {{tags}}
+Pengumuman ini dikirim via channel {{dept}}.
+Status respon terakhir: {{team}}.
+Catatan tambahan: {{tags}}
 ```
 
 ---
 
 ## Halaman Manajemen Responden
-- Tambah responden baru di sisi kiri (nama, nomor, departemen, tim).
-- Ubah informasi dengan memilih nilai di dropdown.
+- Tambah responden baru di sisi kiri (nama, nomor, channel, respon, keterangan).
+- Ubah informasi dengan dropdown channel/respon dan kolom keterangan.
 - Hapus responden jika sudah tidak diperlukan.
 - Data yang ditampilkan selalu tersinkron dengan database.
 
