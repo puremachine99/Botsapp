@@ -72,7 +72,7 @@ Siapkan terlebih dahulu:
      npm start
      ```
 2. **Hubungkan bot WhatsApp**
-   - Saat perintah di atas berjalan, terminal akan menampilkan QR code.
+   - pas perintah di atas berjalan, terminal akan menampilkan QR code.
    - Buka WhatsApp di ponsel → menu *Linked Devices* → *Link a device* → scan QR di terminal.
    - Status di layar utama akan berubah menjadi “Bot: ✅ Online” begitu bot siap.
 3. **Buka panel**

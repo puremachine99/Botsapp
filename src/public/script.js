@@ -14,7 +14,7 @@ async function loadUsers() {
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     let allUsers = await res.json();
 
-    // Filter hanya team kosong atau "Not Responded"
+    // Filter keterangan "Not Responded"
     users = allUsers.filter(
       (u) =>
         !u.team ||
@@ -122,7 +122,7 @@ sendBtn.addEventListener("click", async () => {
       if (data.success) {
         logOutput(`✅ ${user.name} (${user.phone}) — sukses`);
 
-        // update kolom team user langsung saat sukses
+        // update kolom team user langsung pas sukses
         try {
           await fetch(`/users/${user.id}/team`, {
             method: "PATCH",
@@ -153,7 +153,7 @@ sendBtn.addEventListener("click", async () => {
   }
 
   logOutput("📩 Pengiriman selesai.");
-  loadUsers(); // refresh daftar user biar status ter-update
+  loadUsers(); // refresh daftar user biar status keupdate
 });
 
 async function checkBotStatus() {
