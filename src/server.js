@@ -3,7 +3,7 @@ require("dotenv").config();
 const express = require("express");
 const path = require("path");
 const db = require("./db");
-const { initBot, sendMessageBatch } = require("./bot");
+const { initBot, sendMessageBatch, getRandomAssetImage } = require("./bot");
 
 const app = express();
 app.use(express.json());
@@ -30,9 +30,23 @@ app.post("/broadcast", async (req, res) => {
   }
 
   try {
-    // panggil bot kirim ke 1 nomor aja
-    await sendMessageBatch([{ phone }], message);
-    res.json({ success: true });
+    const mediaPath = getRandomAssetImage();
+    const recipients = [{ phone, mediaPath }];
+    const { sent, failed } = await sendMessageBatch(recipients, message);
+
+    if (sent === 0) {
+      return res.status(500).json({
+        success: false,
+        error: failed ? "Failed to send message" : "Bot is not ready",
+      });
+    }
+
+    res.json({
+      success: true,
+      sent,
+      failed,
+      media: mediaPath ? `/assets/${path.basename(mediaPath)}` : null,
+    });
   } catch (err) {
     console.error("send error:", err);
     res.status(500).json({ success: false, error: err.message });
